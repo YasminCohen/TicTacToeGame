@@ -1,40 +1,52 @@
 import random
 
 LEN_MIX_DRIX_CHECKERED = 9
-LEN_ROW = 3
-LEN_COL =3
-
 
 def update_matrix(index,matrix,sign):
-    if index ==0:
-        matrix[0][0] = sign
-    elif index == 1:
-        matrix[0][1] = sign
-    elif index == 2:
-        matrix[0][2] = sign
-    elif index == 3:
-        matrix[1][0] = sign
-    elif index == 4:
-        matrix[1][1] = sign
-    elif index == 5:
-        matrix[1][2] = sign
-    elif index == 6:
-        matrix[2][0] = sign
-    elif index == 7:
-        matrix[2][1] = sign
-    elif index == 8:
-        matrix[2][2] = sign
+    match index:
+        case 0:
+            matrix[0][0] = sign
+        case 1:
+            matrix[0][1] = sign
+        case 2:
+            matrix[0][2] = sign
+        case 3:
+            matrix[1][0] = sign
+        case 4:
+            matrix[1][1] = sign
+        case 5:
+            matrix[1][2] = sign
+        case 6:
+            matrix[2][0] = sign
+        case 7:
+            matrix[2][1] = sign
+        case 8:
+            matrix[2][2] = sign
+        case _:
+            raise Exception("The index not valid, try again")
+
+def input_name_user():
+    while True:
+        try:
+            name = input("Enter your name: ").strip()
+            if not name.replace(" ","").isalpha() or not name or len(name)>20:
+                raise Exception("The name not valid, try again...")
+            else:
+                return name
+        except Exception as e:
+            print(e)
 
 def player_registration():
-    first_player = input("Enter your name.")
-    second_player = input("Enter your name.")
+    first_player = input_name_user()
+    second_player = input_name_user()
     sign_array = ["X","O"]
     random.shuffle(sign_array)
     sign_of_first = sign_array[0]
     sign_of_second = sign_array[1]
-    input_sign = input(f"{first_player} If you want your sign to be an X, "
-                          f"enter an X, if you want a circle, enter an O, "
-                          f"if you don't want to choose, enter an E.")
+    input_sign = input(f"{first_player}, choose your sign:\n"
+                       f"- Enter 'X' to play as X\n"
+                       f"- Enter 'O' to play as O\n"
+                       f"- Enter 'E' to let us pick one for you\n")
     if input_sign == "X":
         sign_of_first = "X"
         sign_of_second = "O"
@@ -51,7 +63,6 @@ def print_board(matrix, previous_elections, current_selection = None):
     counter = 0
     if current_selection:
         current_place, sign = current_selection
-        print(f"current_place: {current_place},sign: {sign} ")
     else:
         current_place =-1
         sign = None
@@ -66,13 +77,25 @@ def print_board(matrix, previous_elections, current_selection = None):
             counter+=1
         print()
 
+def input_index_user(player_current, previous_elections):
+    while True:
+        try:
+            input_selection = input(f"{player_current} Enter a position on the board from 0-9: ")
+            guess = int(input_selection)
+            if guess <0 or guess >8 or guess in previous_elections:
+                raise Exception("The guess not valid, try again...")
+            else:
+                return guess
+        except Exception as e:
+            print(e)
+
 def put_sign(player_current,player_sign, matrix, previous_elections):
     print(f"{player_current}'s turn: ")
+    print()
     print_board(matrix, previous_elections)
-    input_selection = input(f"{player_current} Enter a position on the board from 0-9")
+    place_on_board = input_index_user(player_current, previous_elections)
     name_player = player_current
     sign = player_sign[name_player]
-    place_on_board = int(input_selection)
     current_selection = (place_on_board,sign)
     print_board(matrix, previous_elections,current_selection)
     previous_elections[place_on_board] = sign
@@ -122,12 +145,13 @@ def diagonal_check(matrix):
     return False
 
 def play_game(player_sign):
+    print("Welcome to the game, the positions on the board are as follows:")
     matrix = [["0","1","2"],["3","4","5"],["6","7","8"]]
+    print_matrix(matrix)
     previous_elections = {}
     list_key = list(player_sign.keys())
     counter = 0
     while len(previous_elections) < LEN_MIX_DRIX_CHECKERED:
-
         if counter%2 == 0:
             player_current = list_key[0]
         else:
@@ -136,9 +160,13 @@ def play_game(player_sign):
         counter+=1
         if win_or_draw:
             return True
-
     return False
 
+def print_matrix(matrix):
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+           print(f"[{matrix[i][j]}]", end=" ")
+        print()
 
 def start_game():
     player_sign = player_registration()
