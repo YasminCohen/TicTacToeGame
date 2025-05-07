@@ -11,7 +11,7 @@ def input_name_user():
         try:
             name = input().strip()
             if not name.replace(" ","").isalpha() or not name or not len(name) in range(MIN_NAME_LENGTH, MAX_NAME_LENGTH+1) :
-                raise Exception("The name is invalid, try again...")
+                raise Exception("The name is invalid,the name must be between 2-20 letters, and must not contain numbers, try again...")
             else:
                 return name
         except Exception as e:
@@ -26,7 +26,7 @@ def input_index(current_player_name, previous_elections):
                 return -1
             index = int(input_selection)
             if not index in range(9) or index in previous_elections:
-                raise Exception("The number invalid, try again...")
+                raise Exception("The index invalid,the index must be number between 0 and 8, and you cannot choose a place that is already taken, try again...")
             else:
                 return index
         except Exception as e:
@@ -44,7 +44,7 @@ def player_registration(against_computer):
         second_player = input_name_user()
 
     player_sign = {}
-    sign = input(f"{first_player}, choose your sign, Enter 'X' to play as X, Enter 'O' to play as O, Enter any other letter to random selection\n")
+    sign = input(f"{first_player}, choose your sign, Enter 'X' to play as X, Enter 'O' to play as O, Enter any other key if you don't want to choose a sign\n")
     if sign == "X":
         player_sign[first_player] , player_sign[second_player] = ("X","O")
     elif sign == "O":
@@ -183,7 +183,7 @@ def choose_mode_and_register():
                 against_computer = True
                 player_sign = player_registration(against_computer)
             else:
-                raise Exception("The input not valid, try again...")
+                raise Exception("The input not valid,there are only two options, the number 0 or 1, try again...")
             return player_sign, against_computer
         except Exception as e:
             print(e)
